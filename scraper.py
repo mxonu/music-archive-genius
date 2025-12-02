@@ -18,10 +18,8 @@ if not GENIUS_TOKEN:
     print("GENIUS_TOKEN=твой_токен_сюда")
     exit(1)
 
-# Инициализируем API клиент Genius
 genius = lg.Genius(GENIUS_TOKEN, skip_non_songs=True, excluded_terms=["(Remix)", "(Cover)"])
 
-# Флаг для более подробного вывода
 genius.verbose = False
 
 
