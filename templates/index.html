@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Музыкальный архив с Genius</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎵 Музыкальный архив</h1>
+            <p class="subtitle">Музыка, артисты и тексты песен с Genius</p>
+        </header>
+
+        <div class="search-section">
+            <form method="get" action="/" class="search-form">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="🔍 Поиск артиста, песни или текста..." 
+                    value="{{ search_query }}"
+                    class="search-input"
+                    autocomplete="off"
+                >
+                <button type="submit" class="search-btn">Поиск</button>
+                {% if search_query %}
+                    <a href="/" class="clear-btn">✕ Очистить</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <strong>{{ total_artists }}</strong>
+                <span>Артист(ов)</span>
+            </div>
+            <div class="stat-item">
+                <strong>{{ total_songs }}</strong>
+                <span>Песен(и)</span>
+            </div>
+            {% if search_query %}
+                <div class="stat-item highlight">
+                    <strong>{{ displayed_artists }}</strong>
+                    <span>Найдено артист(ов)</span>
+                </div>
+                <div class="stat-item highlight">
+                    <strong>{{ displayed_songs }}</strong>
+                    <span>Найдено песен(и)</span>
+                </div>
+            {% endif %}
+        </div>
+
+        
+        {% if search_query %}
+            <div class="search-info">
+                📋 Результаты поиска по "<strong>{{ search_query }}</strong>"
+            </div>
+        {% endif %}
+
+        
+        <div class="artists-list">
+            {% if music_data %}
+                {% for artist in music_data %}
+                    <div class="artist-card">
+                        <div class="artist-header">
+                            {% if artist.image_url %}
+                                <img src="{{ artist.image_url }}" alt="{{ artist.artist }}" class="artist-image">
+                            {% else %}
+                                <div class="artist-image-placeholder">🎤</div>
+                            {% endif %}
+                            
+                            <div class="artist-info">
+                                <h2 class="artist-name">{{ artist.artist }}</h2>
+                                <div class="artist-meta">
+                                    <span class="country">🌍 {{ artist.country }}</span>
+                                    <span class="songs-count">🎵 {{ artist.songs|length }} песен(и)</span>
+                                </div>
+                                {% if artist.genius_url %}
+                                    <a href="{{ artist.genius_url }}" target="_blank" class="genius-link">
+                                        🔗 Профиль на Genius
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="songs-list">
+                            {% for song in artist.songs %}
+                                <div class="song-card">
+                                    <div class="song-header">
+                                        <div class="song-info">
+                                            <h3 class="song-title">{{ song.title }}</h3>
+                                            {% if song.year %}
+                                                <span class="song-year">📅 {{ song.year }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <details class="song-lyrics">
+                                        <summary>📝 Показать текст</summary>
+                                        <div class="lyrics-content">
+                                            {% if song.lyrics == "Текст недоступен" %}
+                                                <p class="lyrics-unavailable">
+                                                    ⚠️ Текст песни недоступен на Genius
+                                                </p>
+                                            {% else %}
+                                                {% for line in song.lyrics.split('\n') %}
+                                                    {% if line.strip() %}
+                                                        <p>{{ line }}</p>
+                                                    {% else %}
+                                                        <br>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </details>
+
+                                    {% if song.genius_url %}
+                                        <a href="{{ song.genius_url }}" target="_blank" class="song-link">
+                                            🔗 Читать на Genius
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p class="empty-icon">😕</p>
+                    <p>Результаты не найдены</p>
+                    <p class="empty-hint">
+                        {% if search_query %}
+                            Попробуй другой поисковый запрос или <a href="/">вернись на главную</a>
+                        {% else %}
+                            Архив пока пуст. Запусти scraper.py для сбора музыки!
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+        
+        <footer class="footer">
+            <p>🎶 Музыкальный архив | Данные с Genius.com | Создано на Flask</p>
+        </footer>
+    </div>
+</body>
+</html>
