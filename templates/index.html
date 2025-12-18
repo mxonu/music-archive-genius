@@ -69,7 +69,6 @@
                             {% endif %}
                             
                             <div class="artist-info">
-                                <!-- КЛИКАБЕЛЬНОЕ ИМЯ АРТИСТА -->
                                 <h2 class="artist-name">
                                     <a href="/artist/{{ artist.artist }}" class="artist-link">
                                         {{ artist.artist }}
@@ -81,7 +80,6 @@
                                     <span class="songs-count">🎵 {{ artist.songs|length }} песен(и)</span>
                                 </div>
                                 
-                                <!-- ТОЛЬКО ССЫЛКА НА GENIUS (БЕЗ API) -->
                                 {% if artist.genius_url %}
                                     <a href="{{ artist.genius_url }}" target="_blank" class="genius-link">
                                         🔗 Профиль на Genius
@@ -90,7 +88,6 @@
                             </div>
                         </div>
 
-                        <!-- ПРЕВЬЮ ПЕРВЫХ 3 ПЕСЕН -->
                         <div class="songs-preview">
                             <h3 class="preview-title">Популярные песни:</h3>
                             {% for song in artist.songs[:3] %}
@@ -110,7 +107,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- КНОПКА "СМОТРЕТЬ ВСЕ ПЕСНИ" -->
                         <div class="artist-actions">
                             <a href="/artist/{{ artist.artist }}" class="btn-view-artist">
                                 📂 Смотреть все песни →
@@ -135,6 +131,7 @@
 
         <footer class="footer">
             <p>🎶 Музыкальный архив | Данные с Genius.com | Создано на Flask</p>
+            <p>👨‍💻 Создатель: <strong>Судаков Глеб</strong> © 2025</p>
         </footer>
     </div>
 </body>
