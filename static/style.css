@@ -133,6 +133,7 @@ body {
     display: grid;
     gap: 20px;
 }
+
 .artist-card {
     background-color: white;
     border: 1px solid #ddd;
@@ -334,6 +335,7 @@ body {
 .breadcrumbs a:hover {
     text-decoration: underline;
 }
+
 .artist-page-header {
     display: flex;
     gap: 30px;
@@ -469,33 +471,41 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     user-select: none;
+    font-weight: 500;
 }
 
 .lyrics-toggle:hover {
     background-color: #f7fafc;
 }
-
 .lyrics-content-box {
     margin-top: 15px;
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #e2e8f0;
+    padding: 30px;
+    background: linear-gradient(to bottom, #f7fafc 0%, #ffffff 100%);
+    border-left: 4px solid #4a5568;
     border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .lyrics-text {
-    white-space: pre-wrap;
-    line-height: 1.8;
     color: #2d3748;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: left; 
+    font-family: 'Georgia', serif; 
+    white-space: pre-line; 
+    word-wrap: break-word;
+    letter-spacing: 0.3px;
 }
 
-.lyrics-text p {
-    margin-bottom: 10px;
+.lyrics-text br {
+    display: block;
+    margin: 0;
 }
 
 .lyrics-unavailable {
     color: #999;
     font-style: italic;
+    text-align: center;
 }
 
 .song-genius-link {
@@ -518,6 +528,7 @@ body {
     padding: 40px;
     color: #999;
 }
+
 @media (max-width: 768px) {
     .container {
         padding: 10px;
@@ -553,5 +564,9 @@ body {
     .artist-page-image,
     .artist-page-image-placeholder {
         margin: 0 auto;
+    }
+    
+    .lyrics-content-box {
+        padding: 20px;
     }
 }
