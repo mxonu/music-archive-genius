@@ -20,9 +20,6 @@
 
         <header class="header">
             <h1>🎵 {{ artist.artist }}</h1>
-            {% if artist.country and artist.country != 'Unknown' %}
-                <p class="subtitle">🌍 {{ artist.country }}</p>
-            {% endif %}
         </header>
 
         <div class="artist-page-header">
@@ -36,9 +33,6 @@
                 <h2 class="artist-page-name">{{ artist.artist }}</h2>
                 
                 <div class="artist-page-meta">
-                    {% if artist.country and artist.country != 'Unknown' %}
-                        <span class="meta-item">📍 {{ artist.country }}</span>
-                    {% endif %}
                     <span class="meta-item">🎵 Всего песен: <strong>{{ artist.songs|length }}</strong></span>
                 </div>
                 
