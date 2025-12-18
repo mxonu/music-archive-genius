@@ -150,7 +150,7 @@ def parse_list(names, songs=5):
         total_songs += len(artist['songs'])
     
     print("\n" + "="*50)
-    print("ИТОГО:")
+    print("ИТОГ:")
     print(f"  Артистов в базе: {len(database)}")
     print(f"  Добавлено новых: {new_count}")
     print(f"  Всего песен: {total_songs}")
