@@ -164,6 +164,6 @@ if __name__ == '__main__':
     print("МУЗЫКАЛЬНЫЙ АРХИВ")
     print("="*50)
     print("\nСервер: http://127.0.0.1:5000")
-    print("Остановка: Ctrl+C\n")
+    print("Остановить сервер: Ctrl+C\n")
     
     app.run(debug=True, host='127.0.0.1', port=5000)
