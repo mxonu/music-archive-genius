@@ -42,7 +42,6 @@ def search_data(data, query):
         if len(found_songs) > 0:
             results.append({
                 "artist": artist['artist'],
-                "country": artist.get('country', 'Unknown'),
                 "genius_url": artist.get('genius_url', ''),
                 "image_url": artist.get('image_url', ''),
                 "songs": found_songs
