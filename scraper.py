@@ -9,7 +9,7 @@ load_dotenv()
 token = os.getenv('GENIUS_TOKEN')
 if not token:
     print("Ошибка: токен не найден!")
-    print("Создай .env файл и добавь GENIUS_TOKEN=твой_токен")
+    print("Создай .env файл и добавь токен")
     exit()
 
 genius = lyricsgenius.Genius(token, skip_non_songs=True, excluded_terms=["Remix", "Cover"])
