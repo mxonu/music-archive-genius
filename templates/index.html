@@ -51,14 +51,12 @@
             {% endif %}
         </div>
 
-        
         {% if search_query %}
             <div class="search-info">
                 📋 Результаты поиска по "<strong>{{ search_query }}</strong>"
             </div>
         {% endif %}
 
-        
         <div class="artists-list">
             {% if music_data %}
                 {% for artist in music_data %}
@@ -71,11 +69,19 @@
                             {% endif %}
                             
                             <div class="artist-info">
-                                <h2 class="artist-name">{{ artist.artist }}</h2>
+                                <!-- КЛИКАБЕЛЬНОЕ ИМЯ АРТИСТА -->
+                                <h2 class="artist-name">
+                                    <a href="/artist/{{ artist.artist }}" class="artist-link">
+                                        {{ artist.artist }}
+                                    </a>
+                                </h2>
+                                
                                 <div class="artist-meta">
                                     <span class="country">🌍 {{ artist.country }}</span>
                                     <span class="songs-count">🎵 {{ artist.songs|length }} песен(и)</span>
                                 </div>
+                                
+                                <!-- ТОЛЬКО ССЫЛКА НА GENIUS (БЕЗ API) -->
                                 {% if artist.genius_url %}
                                     <a href="{{ artist.genius_url }}" target="_blank" class="genius-link">
                                         🔗 Профиль на Genius
@@ -84,44 +90,31 @@
                             </div>
                         </div>
 
-                        <div class="songs-list">
-                            {% for song in artist.songs %}
-                                <div class="song-card">
-                                    <div class="song-header">
-                                        <div class="song-info">
-                                            <h3 class="song-title">{{ song.title }}</h3>
-                                            {% if song.year %}
-                                                <span class="song-year">📅 {{ song.year }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-
-                                    <details class="song-lyrics">
-                                        <summary>📝 Показать текст</summary>
-                                        <div class="lyrics-content">
-                                            {% if song.lyrics == "Текст недоступен" %}
-                                                <p class="lyrics-unavailable">
-                                                    ⚠️ Текст песни недоступен на Genius
-                                                </p>
-                                            {% else %}
-                                                {% for line in song.lyrics.split('\n') %}
-                                                    {% if line.strip() %}
-                                                        <p>{{ line }}</p>
-                                                    {% else %}
-                                                        <br>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
-                                    </details>
-
-                                    {% if song.genius_url %}
-                                        <a href="{{ song.genius_url }}" target="_blank" class="song-link">
-                                            🔗 Читать на Genius
-                                        </a>
+                        <!-- ПРЕВЬЮ ПЕРВЫХ 3 ПЕСЕН -->
+                        <div class="songs-preview">
+                            <h3 class="preview-title">Популярные песни:</h3>
+                            {% for song in artist.songs[:3] %}
+                                <div class="song-preview-item">
+                                    <span class="song-number">{{ loop.index }}.</span>
+                                    <span class="song-preview-title">{{ song.title }}</span>
+                                    {% if song.year %}
+                                        <span class="song-preview-year">({{ song.year }})</span>
                                     {% endif %}
                                 </div>
                             {% endfor %}
+                            
+                            {% if artist.songs|length > 3 %}
+                                <div class="song-preview-more">
+                                    И ещё {{ artist.songs|length - 3 }} песен...
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- КНОПКА "СМОТРЕТЬ ВСЕ ПЕСНИ" -->
+                        <div class="artist-actions">
+                            <a href="/artist/{{ artist.artist }}" class="btn-view-artist">
+                                📂 Смотреть все песни →
+                            </a>
                         </div>
                     </div>
                 {% endfor %}
@@ -140,7 +133,6 @@
             {% endif %}
         </div>
 
-        
         <footer class="footer">
             <p>🎶 Музыкальный архив | Данные с Genius.com | Создано на Flask</p>
         </footer>
