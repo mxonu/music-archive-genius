@@ -114,7 +114,7 @@ def parse_artist(name, songs_count=5):
             print("Песни не найдены")
             return None
         
-        print(f"Готово! Добавлено песен: {len(result['songs'])}")
+        print(f"Добавлено песен: {len(result['songs'])}")
         return result
         
     except Exception as e:
