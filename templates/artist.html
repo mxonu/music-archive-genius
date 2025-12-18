@@ -3,72 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ artist.artist }} | Музыкальный архив</title>
+    <title>{{ artist.artist }} - Музыкальный архив</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🎵 {{ artist.artist }}</h1>
-            <p class="subtitle">🌍 {{ artist.country }}</p>
-        </header>
-
-        <div class="artist-detail">
-            {% if artist.image_url %}
-                <img src="{{ artist.image_url }}" alt="{{ artist.artist }}" class="artist-detail-image">
-            {% else %}
-                <div class="artist-detail-image-placeholder">🎤</div>
-            {% endif %}
-
-            <div class="artist-detail-info">
-                <h2>{{ artist.artist }}</h2>
-                <p>📍 {{ artist.country }}</p>
-                <p>🎵 Всего песен: <strong>{{ artist.songs|length }}</strong></p>
-                
-                {% if artist.genius_url %}
-                    <a href="{{ artist.genius_url }}" target="_blank" class="btn-primary">
-                        🔗 Профиль на Genius
-                    </a>
-                {% endif %}
-                
-                <a href="/" class="btn-secondary">← Вернуться</a>
-            </div>
+        <div class="back-navigation">
+            <a href="/" class="btn-back">
+                ← Назад на главную
+            </a>
         </div>
 
-        <div class="songs-detail-list">
-            <h3>Песни ({{ artist.songs|length }})</h3>
+        <header class="artist-page-header">
+            {% if artist.image_url %}
+                <img src="{{ artist.image_url }}" alt="{{ artist.artist }}" class="artist-page-image">
+            {% else %}
+                <div class="artist-page-image-placeholder">🎤</div>
+            {% endif %}
             
-            {% for song in artist.songs %}
-                <div class="song-detail-card">
-                    <h4>{{ song.title }}</h4>
-                    {% if song.year %}
-                        <p class="song-meta">📅 Год: {{ song.year }}</p>
-                    {% endif %}
-
-                    <details class="song-full-lyrics">
-                        <summary>📝 Полный текст</summary>
-                        <div class="lyrics-full-content">
-                            {% for line in song.lyrics.split('\n') %}
-                                {% if line.strip() %}
-                                    <p>{{ line }}</p>
-                                {% else %}
-                                    <br>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </details>
-
-                    {% if song.genius_url %}
-                        <a href="{{ song.genius_url }}" target="_blank" class="link-genius">
-                            🔗 Читать на Genius
-                        </a>
-                    {% endif %}
+            <div class="artist-page-info">
+                <h1 class="artist-page-name">{{ artist.artist }}</h1>
+                
+                <div class="artist-page-meta">
+                    <span class="meta-item">🌍 {{ artist.country }}</span>
+                    <span class="meta-item">🎵 {{ artist.songs|length }} песен(и)</span>
                 </div>
-            {% endfor %}
+                
+                {% if artist.genius_url %}
+                    <a href="{{ artist.genius_url }}" target="_blank" class="genius-link-large">
+                        🔗 Открыть профиль на Genius
+                    </a>
+                {% endif %}
+            </div>
+        </header>
+
+        <div class="breadcrumbs">
+            <a href="/">Главная</a> / <span>{{ artist.artist }}</span>
+        </div>
+
+        <div class="songs-section">
+            <h2 class="section-title">Все песни</h2>
+            
+            {% if artist.songs %}
+                <div class="songs-grid">
+                    {% for song in artist.songs %}
+                        <div class="song-card-detailed">
+                            <div class="song-card-header">
+                                <div class="song-number">{{ loop.index }}</div>
+                                <div class="song-info-block">
+                                    <h3 class="song-title-large">{{ song.title }}</h3>
+                                    {% if song.year %}
+                                        <span class="song-year-badge">📅 {{ song.year }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <details class="lyrics-details">
+                                <summary class="lyrics-toggle">
+                                    📝 Показать текст песни
+                                </summary>
+                                <div class="lyrics-content-box">
+                                    {% if song.lyrics == "Текст недоступен" %}
+                                        <p class="lyrics-unavailable">
+                                            ⚠️ Текст песни недоступен на Genius
+                                        </p>
+                                    {% else %}
+                                        <div class="lyrics-text">
+                                            {% for line in song.lyrics.split('\n') %}
+                                                {% if line.strip() %}
+                                                    <p>{{ line }}</p>
+                                                {% else %}
+                                                    <br>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </details>
+
+                            {% if song.genius_url %}
+                                <a href="{{ song.genius_url }}" target="_blank" class="song-genius-link">
+                                    🔗 Читать на Genius
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-songs">
+                    <p>У этого артиста пока нет песен в архиве</p>
+                </div>
+            {% endif %}
         </div>
 
         <footer class="footer">
-            <p>🎶 Музыкальный архив | Данные с Genius.com</p>
+            <p>🎶 Музыкальный архив | Данные с Genius.com | Создано на Flask</p>
         </footer>
     </div>
 </body>
