@@ -1,10 +1,3 @@
-"""
-Веб-приложение Flask для просмотра и поиска музыкальных данных.
-
-Запуск: python app.py
-Сайт: http://127.0.0.1:5000
-"""
-
 import json
 import os
 from flask import Flask, render_template, request, jsonify
@@ -12,166 +5,166 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-MUSIC_DATA_FILE = 'music_data.json'
+DATA_FILE = 'music_data.json'
 
+def load_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            f = open(DATA_FILE, 'r', encoding='utf-8')
+            data = json.load(f)
+            f.close()
+            return data
+        except:
+            print("Ошибка чтения файла")
+            return []
+    else:
+        return []
 
-def load_music_data():
-    """Загружает данные из JSON-файла"""
-    try:
-        if os.path.exists(MUSIC_DATA_FILE):
-            with open(MUSIC_DATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-    except Exception as e:
-        print(f"Ошибка при загрузке данных: {e}")
-    return []
-
-
-def search_in_data(data, query):
-    """
-    Ищет результаты в данных
-    """
-    if not query:
+def search_data(data, query):
+    if query == '':
         return data
     
-    query = query.lower().strip()
-    filtered = []
+    query = query.lower()
+    results = []
     
     for artist in data:
-        artist_match = query in artist['artist'].lower()
+        if query in artist['artist'].lower():
+            results.append(artist)
+            continue
         
-        filtered_songs = [
-            song for song in artist['songs']
-            if query in song['title'].lower() or 
-               query in song['lyrics'].lower()
-        ]
+        found_songs = []
+        for song in artist['songs']:
+            if query in song['title'].lower():
+                found_songs.append(song)
+            elif query in song['lyrics'].lower():
+                found_songs.append(song)
         
-        if artist_match:
-            filtered.append(artist)
-        elif filtered_songs:
-            filtered.append({
+        if len(found_songs) > 0:
+            results.append({
                 "artist": artist['artist'],
                 "country": artist.get('country', 'Unknown'),
                 "genius_url": artist.get('genius_url', ''),
                 "image_url": artist.get('image_url', ''),
-                "songs": filtered_songs
+                "songs": found_songs
             })
     
-    return filtered
-
+    return results
 
 @app.route('/')
 def index():
-    """Главная страница"""
-    music_data = load_music_data()
-    search_query = request.args.get('search', '').strip()
+    data = load_data()
+    search = request.args.get('search', '').strip()
     
-    if search_query:
-        displayed_data = search_in_data(music_data, search_query)
+    if search:
+        displayed = search_data(data, search)
     else:
-        displayed_data = music_data
+        displayed = data
     
-    total_artists = len(music_data)
-    total_songs = sum(len(artist['songs']) for artist in music_data)
-    displayed_artists = len(displayed_data)
-    displayed_songs = sum(len(artist['songs']) for artist in displayed_data)
+    total_artists = len(data)
+    total_songs = 0
+    for artist in data:
+        total_songs += len(artist['songs'])
+    
+    shown_artists = len(displayed)
+    shown_songs = 0
+    for artist in displayed:
+        shown_songs += len(artist['songs'])
     
     return render_template(
         'index.html',
-        music_data=displayed_data,
-        search_query=search_query,
+        music_data=displayed,
+        search_query=search,
         total_artists=total_artists,
         total_songs=total_songs,
-        displayed_artists=displayed_artists,
-        displayed_songs=displayed_songs
+        displayed_artists=shown_artists,
+        displayed_songs=shown_songs
     )
-
 
 @app.route('/artist/<artist_name>')
 def artist_page(artist_name):
-    """Страница артиста"""
-    music_data = load_music_data()
+    data = load_data()
     
-    for artist in music_data:
+    found = None
+    for artist in data:
         if artist['artist'].lower() == artist_name.lower():
-            return render_template('artist.html', artist=artist)
+            found = artist
+            break
     
-    return render_template('404.html', message=f"Артист '{artist_name}' не найден"), 404
-
+    if found:
+        return render_template('artist.html', artist=found)
+    else:
+        return render_template('404.html', message=f"Артист '{artist_name}' не найден"), 404
 
 @app.route('/api/artists')
 def api_artists():
-    """API: Список всех артистов"""
-    music_data = load_music_data()
-    artists = [
-        {
+    data = load_data()
+    
+    result = []
+    for artist in data:
+        result.append({
             "name": artist['artist'],
             "country": artist.get('country', 'Unknown'),
             "songs_count": len(artist['songs']),
             "url": f"/artist/{artist['artist']}"
-        }
-        for artist in music_data
-    ]
-    return jsonify(artists)
-
+        })
+    
+    return jsonify(result)
 
 @app.route('/api/artist/<artist_name>')
 def api_artist(artist_name):
-    """API: Информация об артисте"""
-    music_data = load_music_data()
+    data = load_data()
     
-    for artist in music_data:
+    for artist in data:
         if artist['artist'].lower() == artist_name.lower():
             return jsonify(artist)
     
     return jsonify({"error": "Artist not found"}), 404
 
-
 @app.route('/api/search')
 def api_search():
-    """API: Поиск"""
-    query = request.args.get('q', '').strip()
+    q = request.args.get('q', '').strip()
     
-    if not query:
-        return jsonify({"error": "Query parameter 'q' is required"}), 400
+    if q == '':
+        return jsonify({"error": "Query is empty"}), 400
     
-    music_data = load_music_data()
-    results = search_in_data(music_data, query)
+    data = load_data()
+    results = search_data(data, q)
     
     return jsonify(results)
 
-
 @app.route('/api/stats')
 def api_stats():
-    """API: Статистика"""
-    music_data = load_music_data()
+    data = load_data()
     
-    total_artists = len(music_data)
-    total_songs = sum(len(artist['songs']) for artist in music_data)
+    total_artists = len(data)
+    total_songs = 0
+    for artist in data:
+        total_songs += len(artist['songs'])
     
-    stats_by_country = {}
-    for artist in music_data:
+    countries = {}
+    for artist in data:
         country = artist.get('country', 'Unknown')
-        stats_by_country[country] = stats_by_country.get(country, 0) + 1
+        if country in countries:
+            countries[country] += 1
+        else:
+            countries[country] = 1
     
     return jsonify({
         "total_artists": total_artists,
         "total_songs": total_songs,
-        "artists_by_country": stats_by_country,
+        "artists_by_country": countries,
         "last_updated": datetime.now().isoformat()
     })
 
-
 @app.errorhandler(404)
-def page_not_found(error):
-    """404 ошибка"""
+def not_found(error):
     return render_template('404.html'), 404
 
-
 if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("🎵 МУЗЫКАЛЬНЫЙ АРХИВ")
-    print("="*60)
-    print("\n📱 http://127.0.0.1:5000")
-    print("Нажмите Ctrl+C для остановки\n")
+    print("\n" + "="*50)
+    print("МУЗЫКАЛЬНЫЙ АРХИВ")
+    print("="*50)
+    print("\nСервер: http://127.0.0.1:5000")
+    print("Остановка: Ctrl+C\n")
     
     app.run(debug=True, host='127.0.0.1', port=5000)
