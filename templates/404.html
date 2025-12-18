@@ -2,15 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>404 - Не найдено</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Страница не найдена</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <div class="error-page">
-            <h1>404</h1>
-            <p>😕 Страница не найдена</p>
-            <a href="/" class="btn-primary">← Вернуться на главную</a>
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Страница не найдена</h2>
+            <p class="error-message">
+                {{ message or "К сожалению, запрашиваемая страница не существует" }}
+            </p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn-back-large">
+                    ← Вернуться на главную
+                </a>
+            </div>
         </div>
     </div>
 </body>
