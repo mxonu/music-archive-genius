@@ -63,7 +63,6 @@ def parse_artist(name, songs_count=5):
         
         result = {
             "artist": artist.name,
-            "country": "Unknown",
             "genius_url": artist.url,
             "image_url": None,
             "songs": []
