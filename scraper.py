@@ -71,7 +71,7 @@ def parse_artist(name, songs_count=5):
         if hasattr(artist, 'image_url'):
             result['image_url'] = artist.image_url
         
-        print("Собираю песни...")
+        print("Собираю песни")
         count = 0
         
         for song in artist.songs:
